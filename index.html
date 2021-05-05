@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FARSEER Barcelona</title>
+    
+    
+    <!--SOME CUSTOM CSS-->
+<style>
+    #mapid{
+  position: absolute;
+  top: 55px;
+  bottom: 0;
+  width: 100%;
+}
+
+#legend {
+  color: #dddddd;
+  font-size:small;
+}
+#legend-colorbar {
+  background: linear-gradient(to bottom, #9e0142, #d53e4f, #f46d43, #fdae61, #fee08b, #ffffbf, #e6f598, #abdda4, #66c2a5, #3288bd, #5e4fa2);
+  height: 300px;
+  width:25px;
+}
+
+.navbar {
+  z-index: 10001;
+}
+
+</style>
+    
+    
+  
+    
+     <link rel="stylesheet" href="css/leaflet.css"/>
+   
+   
+   <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="js/leaflet.js"></script>
+    
+    <!--bootstrap-->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    
+  
+
+<link rel="stylesheet" href="css/datepicker.css"/>
+
+
+</head>
+<body>
+  
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">FARSEER Barcelona</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="class=""">Risk Map</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="time_profiles.html">Time Profiles</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+  <div class="container" style="z-index:10000; position: absolute; right: 20px; width: 200px;">
+    
+      <div class="row">
+  
+  <p> <span id="cast_type" class="badge bg-success"style="width: 100px;">Nowcast</span> </p>
+  
+<div class="input-group date" data-provide="datepicker" data-date-end-date="+6d" id="datepicker_id">
+    <input type="text" class="form-control" value="Select Date">
+    <div class="input-group-addon">
+        <span class="glyphicon glyphicon-th"></span>
+    </div>
+</div>
+
+  </div>
+
+  </div>
+
+<div id="legend">  
+<div class="container" style="z-index:10000; position: absolute; bottom: 20px; right: 20px; width: 25px;">
+<div class="row">
+<div class="col-sm">
+<span>VRI</span>
+<div id="legend-colorbar">
+</div>
+</div>
+</div>
+</div>
+
+<div class="container" style="z-index:10000; position: absolute; bottom: 15px; right: 42px; width: 5px">
+<span>0.0</span>
+</div>
+<div class="container" style="z-index:10000; position: absolute; bottom: 305px; right: 42px; width: 5px;">
+<span>0.3</span>
+</div>
+
+</div>  
+  
+  <div class="container-fluid">
+
+  <div class="row">
+   <div id="mapid"></div>
+   
+</div>
+
+</div>
+
+    <!-- Date picker -->
+  
+    <script src="js/jquery-1.12.4.js"></script>
+
+  <script src="js/bootstrap-datepicker.min.js"></script>
+
+
+
+<script src="js/georaster.browser.bundle.min.js"></script>
+<script src="js/georaster-layer-for-leaflet.browserify.min.js"></script>
+
+
+<script src="js/chroma.min.js"></script>
+
+  
+      <script type="text/javascript">
+
+// function clamped_scale(v) { return v < 1 ? '#00000000' : chroma.scale(v); }
+
+  var mymap = L.map('mapid').setView([41.3851, 2.1734], 11);
+  
+  
+  L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 19,
+    id: 'johnrbpalmer/cklcc4q673pe517k4n5co81sn',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1Ijoiam9obnJicGFsbWVyIiwiYSI6ImFRTXhoaHcifQ.UwIptK0Is5dJdN8q-1djww'
+}).addTo(mymap);
+  
+  
+    
+
+  </script>  
+
+
+
+<!--bootstrap-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+
+  <script>
+
+const max_vri = .3 // setting max for color scale. May need to revisit this later
+
+function add_layer(a_date, remove_layer){
+     
+      if(remove_layer == true){
+                  mymap.removeLayer(layerGeo);
+          }
+ 
+      var url_to_geotiff_file = "data/vri" + a_date + ".tif";
+
+      fetch(url_to_geotiff_file)
+        .then(response => response.arrayBuffer())
+        .then(arrayBuffer => {
+          parseGeoraster(arrayBuffer).then(georaster => {
+
+            // available color scales can be found by running console.log(chroma.brewer);
+            var scale = chroma.scale("Spectral").domain([1,0]);
+
+            layerGeo = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 1,
+                pixelValuesToColorFn: function(pixelValues) {
+                  var pixelValue = pixelValues[0]; // there's just one band in this raster
+
+                  // if there's a negative value
+                  if (pixelValue < 0) return null;
+
+                //Making 0.3 the max
+                var scaledPixelValue = Math.min(pixelValue, max_vri) / max_vri;
+
+                var color = scale(scaledPixelValue).hex();
+
+                  return color;
+                },
+                resolution: 256
+            });
+          //  console.log("layer:", layer);
+
+            layerGeo.addTo(mymap);
+
+          });
+        });
+
+}
+
+$.fn.datepicker.defaults.autoclose = true;
+
+var layerGeo;
+
+$(document).ready(function() {
+
+      var date_today = new Date();
+      var date_today_fmt = date_today.getFullYear() + '-' + (1+date_today.getMonth()).toString().padStart(2, '0') + '-' + date_today.getDate().toString().padStart(2, '0'); 
+
+      add_layer(date_today_fmt, false);
+
+$('#datepicker_id').datepicker({
+    format: 'dd/mm/yyyy',
+    todayHighlight: true,
+})
+  .on('changeDate', function(e) {
+      
+      var this_date = e.format('yyyy-mm-dd');
+      var this_date_fmt = e.date.getFullYear() + '-' + (1+e.date.getMonth()).toString().padStart(2, '0') + '-' + e.date.getDate().toString().padStart(2, '0'); 
+      
+      if(e.date>date_today){
+        $("#cast_type").text("Forecast").removeClass().addClass("badge bg-warning text-dark");
+      };
+      if(e.date<date_today){
+        $("#cast_type").text("Historical").removeClass().addClass("badge bg-primary");
+      };
+      if(this_date_fmt.localeCompare(date_today_fmt) == 0){
+        $("#cast_type").text("Nowcast").removeClass().addClass("badge bg-success");
+      };
+      
+      add_layer(this_date, true);
+      
+    });
+});
+</script>
+
+
+</body>
+</html>

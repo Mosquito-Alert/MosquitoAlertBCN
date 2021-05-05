@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FARSEER Barcelona</title>
+
+    
+    <!-- including ECharts file -->
+    <script src="js/echarts.min.js"></script>
+    
+    
+    <!--bootstrap-->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    
+  
+    <script src="js/jquery-1.12.4.js"></script>
+
+
+
+</head>
+<body>
+  
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">FARSEER Barcelona</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href=".">Risk Map</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="time_profiles.html">Time Profiles</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+  
+  <div class="container-fluid">
+
+  <div class="row">
+
+  <!-- prepare a DOM container with width and height -->
+    <div id="main" style="width: 100%;height:400px;"></div>
+    
+    <hr />
+
+    <script type="text/javascript">
+
+    Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
+
+
+
+var myChart = echarts.init(document.getElementById('main'));
+
+$.get('data/bcn_time_profile_data.json').done(function (data) {
+  
+      var these_dates = data.map(function(item){return item['date']});
+      var forecast_start = these_dates[these_dates.length - 7];
+      var forecast_end = these_dates[these_dates.length - 1];
+
+    myChart.setOption({
+       title: {
+        left: 'center',
+        text: 'Barcelona Citywide VRI',
+    },
+        tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross'
+        }
+    }, 
+      toolbox: {
+        show: true,
+        feature: {
+            magicType: {type: ['line', 'bar']},
+            saveAsImage: {}
+        }
+    },
+  dataZoom: [
+        {
+            show: true,
+            realtime: true
+        },
+        {
+            type: 'inside',
+            realtime: true
+        }
+    ],
+   xAxis: {
+        type: 'category',
+        data: these_dates
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        data: data.map(function(item){return item['value']}),
+        type: 'line',
+        showSymbol: false,
+        smooth: true,
+        markArea: {
+                itemStyle: {
+                    color: 'rgba(255, 173, 177, 0.4)'
+                },
+                data: [ [{
+                    name: 'Forecast',
+                    xAxis: forecast_start
+                }, {
+                    xAxis: forecast_end
+                }] ]
+            }
+    }]
+    });
+});
+</script>
+
+
+</div>
+
+  <div class="row">
+
+  <!-- prepare a DOM container with width and height -->
+    <div id="district_chart" style="width: 100%;height:400px;"></div>
+
+    <script type="text/javascript">
+
+var district_chart = echarts.init(document.getElementById('district_chart'));
+
+$.get('data/bcn_district_means.json').done(function (data) {
+  
+    var these_dates = [];
+    var district_names = [];
+    var D01 = [];
+    var D02 = [];
+    var D03 = [];
+    var D04 = [];
+    var D05 = [];
+    var D06 = [];
+    var D07 = [];
+    var D08 = [];
+    var D09 = [];
+    var D10 = [];
+    
+    
+    data.forEach(function(item){
+      if (item['DISTRICTE']=='01') 
+      { these_dates.push(item['date']);
+        D01.push(item['value']);
+        district_names.push(item['District'])
+      };
+
+      if (item['DISTRICTE']=='02') 
+      { D02.push(item['value']);
+        district_names.push(item['District'])
+      };
+
+      if (item['DISTRICTE']=='03') 
+      { D03.push(item['value']);
+        district_names.push(item['District'])
+
+      };
+
+      if (item['DISTRICTE']=='04') 
+      { D04.push(item['value']);
+        district_names.push(item['District'])
+
+      };
+
+      if (item['DISTRICTE']=='05') { 
+        D05.push(item['value']);
+        district_names.push(item['District'])
+
+      };
+
+      if (item['DISTRICTE']=='06') 
+      { D06.push(item['value']);
+      district_names.push(item['District'])
+      };
+
+      if (item['DISTRICTE']=='07') 
+      { D07.push(item['value']);
+      district_names.push(item['District'])
+      };
+
+      if (item['DISTRICTE']=='08') 
+      { D08.push(item['value']);
+      district_names.push(item['District'])
+      };
+
+      if (item['DISTRICTE']=='09') 
+      { D09.push(item['value']);
+      district_names.push(item['District'])
+      };
+
+      if (item['DISTRICTE']=='10') 
+      { D10.push(item['value']);
+      district_names.push(item['District'])
+      };
+      
+          
+      
+    });
+  
+  function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index;
+}
+  district_names = district_names.filter(onlyUnique);
+  
+        var forecast_start = these_dates[these_dates.length - 7];
+      var forecast_end = these_dates[these_dates.length - 1];
+
+    district_chart.setOption({
+       title: {
+        left: 'center',
+        text: 'Barcelona District VRI',
+    },
+    legend: {
+      data: district_names,
+      orient: 'vertical',
+      x: 'right',
+      y: 'center'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross'
+        }
+    },   
+          toolbox: {
+        show: true,
+        feature: {
+            magicType: {type: ['line', 'bar']},
+            saveAsImage: {}
+        }
+    },
+      dataZoom: [
+        {
+            show: true,
+            realtime: true
+        },
+        {
+            type: 'inside',
+            realtime: true
+        }
+    ],
+    xAxis: {
+        type: 'category',
+        data: these_dates,
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        name: district_names[0],
+        data: D01,
+        emphasis: {
+          focus: 'series'
+        },
+        type: 'line',
+        showSymbol: false,
+        smooth: true
+    },
+    {
+        name: district_names[1],
+        data: D02,
+        emphasis: {
+          focus: 'series'
+        },
+        type: 'line',
+        showSymbol: false,
+        smooth: true
+    },
+    {
+        name: district_names[2],
+        data: D03,
+        type: 'line',
+        showSymbol: false,
+        smooth: true
+    },
+    {
+        name: district_names[3],
+        data: D04,
+        type: 'line',
+        showSymbol: false,
+        smooth: true
+    },
+    {
+        name: district_names[4],
+        data: D05,
+        type: 'line',
+        showSymbol: false,
+        smooth: true
+    },
+    {
+        name: district_names[5],
+        data: D06,
+        type: 'line',
+        showSymbol: false,
+        smooth: true
+    },
+    {
+        name: district_names[6],
+        data: D07,
+        type: 'line',
+        showSymbol: false,
+        smooth: true
+    },
+    {
+        name: district_names[7],
+        data: D08,
+        type: 'line',
+        showSymbol: false,
+        smooth: true
+    },
+    {
+        name: district_names[8],
+        data: D09,
+        type: 'line',
+        showSymbol: false,
+        smooth: true
+    },
+    {
+        name: district_names[9],
+        data: D10,
+        type: 'line',
+        showSymbol: false,
+        smooth: true,
+                markArea: {
+                itemStyle: {
+                    color: 'rgba(255, 173, 177, 0.4)'
+                },
+                data: [ [{
+                    name: 'Forecast',
+                    xAxis: forecast_start
+                }, {
+                    xAxis: forecast_end
+                }] ]
+            }
+
+    },
+    
+    ]
+    });
+});
+</script>
+
+
+</div>
+
+
+</div>
+
+  
+
+<!--bootstrap-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+</body>
+</html>
