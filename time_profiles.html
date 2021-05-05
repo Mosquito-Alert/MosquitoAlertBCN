@@ -63,7 +63,7 @@
 
 var myChart = echarts.init(document.getElementById('main'));
 
-$.get('data/bcn_time_profile_data.json').done(function (data) {
+$.get('https://mosquito-alert.github.io/bcn/data/bcn_time_profile_data.json').done(function (data) {
   
       var these_dates = data.map(function(item){return item['date']});
       var forecast_start = these_dates[these_dates.length - 7];
@@ -137,7 +137,7 @@ $.get('data/bcn_time_profile_data.json').done(function (data) {
 
 var district_chart = echarts.init(document.getElementById('district_chart'));
 
-$.get('data/bcn_district_means.json').done(function (data) {
+$.get('https://mosquito-alert.github.io/bcn/data/bcn_district_means.json').done(function (data) {
   
     var these_dates = [];
     var district_names = [];
