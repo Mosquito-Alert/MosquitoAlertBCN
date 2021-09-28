@@ -140,7 +140,7 @@ var district_chart = echarts.init(document.getElementById('district_chart'));
 $.get('https://mosquito-alert.github.io/bcn/data/bcn_district_means.json').done(function (data) {
   
     var these_dates = [];
- var district_names = "Ciutat Vella", "Eixample", "Sants-Montjuïc", "Les Corts",  "Sarrià-Sant Gervasi",  "Gràcia",  "Horta-Guinardó",  "Nou Barris",  "Sant Andreu",  "Sant Martí"];
+    var district_names = ["Ciutat Vella", "Eixample", "Sants-Montjuïc", "Les Corts",  "Sarrià-Sant Gervasi",  "Gràcia",  "Horta-Guinardó",  "Nou Barris",  "Sant Andreu",  "Sant Martí"];
     var D01 = [];
     var D02 = [];
     var D03 = [];
