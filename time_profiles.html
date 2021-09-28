@@ -140,7 +140,7 @@ var district_chart = echarts.init(document.getElementById('district_chart'));
 $.get('https://mosquito-alert.github.io/bcn/data/bcn_district_means.json').done(function (data) {
   
     var these_dates = [];
-    var district_names = [];
+ var district_names = "Ciutat Vella", "Eixample", "Sants-Montjuïc", "Les Corts",  "Sarrià-Sant Gervasi",  "Gràcia",  "Horta-Guinardó",  "Nou Barris",  "Sant Andreu",  "Sant Martí"];
     var D01 = [];
     var D02 = [];
     var D03 = [];
@@ -157,55 +157,45 @@ $.get('https://mosquito-alert.github.io/bcn/data/bcn_district_means.json').done(
       if (item['DISTRICTE']=='01') 
       { these_dates.push(item['date']);
         D01.push(item['value']);
-        district_names.push(item['District'])
       };
 
       if (item['DISTRICTE']=='02') 
       { D02.push(item['value']);
-        district_names.push(item['District'])
       };
 
       if (item['DISTRICTE']=='03') 
       { D03.push(item['value']);
-        district_names.push(item['District'])
 
       };
 
       if (item['DISTRICTE']=='04') 
       { D04.push(item['value']);
-        district_names.push(item['District'])
 
       };
 
       if (item['DISTRICTE']=='05') { 
         D05.push(item['value']);
-        district_names.push(item['District'])
 
       };
 
       if (item['DISTRICTE']=='06') 
       { D06.push(item['value']);
-      district_names.push(item['District'])
       };
 
       if (item['DISTRICTE']=='07') 
       { D07.push(item['value']);
-      district_names.push(item['District'])
       };
 
       if (item['DISTRICTE']=='08') 
       { D08.push(item['value']);
-      district_names.push(item['District'])
       };
 
       if (item['DISTRICTE']=='09') 
       { D09.push(item['value']);
-      district_names.push(item['District'])
       };
 
       if (item['DISTRICTE']=='10') 
       { D10.push(item['value']);
-      district_names.push(item['District'])
       };
       
           
@@ -215,7 +205,6 @@ $.get('https://mosquito-alert.github.io/bcn/data/bcn_district_means.json').done(
   function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
 }
-  district_names = district_names.filter(onlyUnique);
   
         var forecast_start = these_dates[these_dates.length - 7];
       var forecast_end = these_dates[these_dates.length - 1];
