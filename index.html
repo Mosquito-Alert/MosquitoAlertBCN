@@ -192,7 +192,10 @@ const max_vri = .5 // setting max for color scale. May need to revisit this late
 function add_layer(a_date, remove_layer){
      
       if(remove_layer == true){
+        if(mymap.hasLayer(layerGeo)){
                   mymap.removeLayer(layerGeo);
+                  
+        } 
           }
  
       var url_to_geotiff_file = "https://mosquito-alert.github.io/bcn/data/vri" + a_date + ".tif";
