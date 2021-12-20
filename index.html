@@ -198,7 +198,12 @@ function add_layer(a_date, remove_layer){
       var url_to_geotiff_file = "https://mosquito-alert.github.io/bcn/data/vri" + a_date + ".tif";
 
       fetch(url_to_geotiff_file)
-        .then(response => response.arrayBuffer())
+        .then(function(response){
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.arrayBuffer();
+        })
         .then(arrayBuffer => {
           parseGeoraster(arrayBuffer).then(georaster => {
 
