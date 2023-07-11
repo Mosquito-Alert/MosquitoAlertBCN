@@ -198,7 +198,7 @@ function add_layer(a_date, remove_layer){
         } 
           }
  
-      var url_to_geotiff_file = "https://mosquito-alert.github.io/bcn/data/vri" + a_date + ".tif";
+      var url_to_geotiff_file = "https://raw.githubusercontent.com/Mosquito-Alert/bcn/main/data/vri" + a_date + ".tif";
 
       fetch(url_to_geotiff_file)
         .then(function(response){
